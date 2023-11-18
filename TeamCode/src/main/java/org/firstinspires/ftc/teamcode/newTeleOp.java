@@ -98,8 +98,8 @@ public class newTeleOp extends LinearOpMode {
             backLeft3.setPower(drive_speed_multiplier*backLeftPower);
 
 
-            double lift_power = gamepad1.y ? 1.0 : 0.0;
-            lift_power = gamepad1.a ? -1.0 : lift_power;
+            double lift_power = gamepad1.left_bumper ? 1.0 : 0.0;
+            lift_power = gamepad1.right_bumper ? -1.0 : lift_power;
             liftLeft.setPower(lift_speed_multiplier * lift_power);
             liftRight.setPower(lift_speed_multiplier * lift_power);
         }
