@@ -24,11 +24,10 @@ public class newTeleOp extends LinearOpMode {
     private DcMotor backRight2 = null;
     private DcMotor backLeft3 = null;
 
-    private DcMotor liftLeft = null;
-    private DcMotor liftRight = null;
+    private DcMotor linearSlideMotor = null;
 
     double drive_speed_multiplier = 0.75;
-    double lift_speed_multiplier = 0.4;
+    double lift_speed_multiplier = 0.4; //linear slide speed
 
     @Override
     public void runOpMode() {
@@ -38,8 +37,7 @@ public class newTeleOp extends LinearOpMode {
         backRight2  = hardwareMap.get(DcMotor.class, "backright2");
         backLeft3   = hardwareMap.get(DcMotor.class, "backleft3");
 
-        liftLeft  = hardwareMap.get(DcMotor.class, "lift_left");
-        liftRight = hardwareMap.get(DcMotor.class, "lift_right");
+        linearSlideMotor  = hardwareMap.get(DcMotor.class, "linearslide");
 
 
 
@@ -49,8 +47,7 @@ public class newTeleOp extends LinearOpMode {
         backRight2.  setDirection(DcMotor.Direction.FORWARD);
         backLeft3.   setDirection(DcMotor.Direction.FORWARD);
 
-        liftLeft.    setDirection(DcMotor.Direction.REVERSE);
-        liftRight.   setDirection(DcMotor.Direction.FORWARD);
+        linearSlideMotor.    setDirection(DcMotor.Direction.REVERSE);
 
         waitForStart();
         runtime.reset();
@@ -98,10 +95,9 @@ public class newTeleOp extends LinearOpMode {
             backLeft3.setPower(drive_speed_multiplier*backLeftPower);
 
 
-            double lift_power = gamepad1.left_bumper ? 1.0 : 0.0;
-            lift_power = gamepad1.right_bumper ? -1.0 : lift_power;
-            liftLeft.setPower(lift_speed_multiplier * lift_power);
-            liftRight.setPower(lift_speed_multiplier * lift_power);
+            double lift_power = gamepad1.left_bumper ? 1.0 : 0.0; // linear slide speed: if left bumper pressed, speed = 1 else speed = 0
+            lift_power = gamepad1.right_bumper ? -1.0 : lift_power; // right bumper pressed, speed = -1
+            linearSlideMotor.setPower(lift_speed_multiplier * lift_power);
         }
 
     }
