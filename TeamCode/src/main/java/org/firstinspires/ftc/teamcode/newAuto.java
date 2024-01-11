@@ -15,7 +15,7 @@ public class newAuto extends LinearOpMode {
     final double constCountsPerRev = 0;
     final double constWheelDiameter_mm = 90; //this is in millimeters
     final double constWheelDiameter_in = 90/25.4;
-    final double constCountsPerInch = (constCountsPerRev) / (constWheelDiameter_in * 3.14104);
+    final double constCountsPerInch = 20 * (constCountsPerRev) / (constWheelDiameter_in * 3.14104);
 
     //pid constants
     final double PID_kp = 1;

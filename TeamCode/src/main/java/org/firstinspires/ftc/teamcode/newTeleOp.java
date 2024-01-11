@@ -6,54 +6,53 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-/*
-This is a copy of omniDriveMentor from onbot java that was made in order to
-put into github
-made on 11/17/2023
-
-team 23750
-*/
-@TeleOp (name = "newTeleop", group="Linear OpMode")
+@TeleOp (name = "newTeleopMentor", group="Linear OpMode")
 
 public class newTeleOp extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor frontLeft0 = null;
-    private DcMotor frontRight1 = null;
-    private DcMotor backRight2 = null;
-    private DcMotor backLeft3 = null;
+    private DcMotor frontLeftEH0 = null;
+    private DcMotor frontRightCH0 = null;
+    private DcMotor backRightCH1 = null;
+    private DcMotor backLeftEH1 = null;
 
     private DcMotor linearSlideMotor = null;
+    private DcMotor armJointMotor = null;
 
-    private Servo armJointServo = null;
+    private CRServo clawServo = null;
     private Servo wristJointServo = null;
 
     double drive_speed_multiplier = 0.75;
-    double lift_speed_multiplier = 0.75; //linear slide speed
+    double lift_speed_multiplier = 1; //linear slide speed
+    double arm_joint_speed_multiplier = 0.50;
+    double claw_speed_multiplier = 0.25;
 
     @Override
     public void runOpMode() {
 
-        frontLeft0  = hardwareMap.get(DcMotor.class, "frontleft0");
-        frontRight1 = hardwareMap.get(DcMotor.class, "frontright1");
-        backRight2  = hardwareMap.get(DcMotor.class, "backright2");
-        backLeft3   = hardwareMap.get(DcMotor.class, "backleft3");
+        frontLeftEH0  = hardwareMap.get(DcMotor.class, "frontleft0");
+        frontRightCH0 = hardwareMap.get(DcMotor.class, "frontright0");
+        backRightCH1  = hardwareMap.get(DcMotor.class, "backright1");
+        backLeftEH1   = hardwareMap.get(DcMotor.class, "backleft1");
 
         linearSlideMotor  = hardwareMap.get(DcMotor.class, "linearslide");
-        armJointServo = hardwareMap.get(Servo.class, "armJointMotor");
+        armJointMotor  = hardwareMap.get(DcMotor.class, "armJointMotor");
+        clawServo = hardwareMap.get(CRServo.class, "clawJointMotor");
         wristJointServo = hardwareMap.get(Servo.class, "wristJointMotor");
 
 
 
         //set direction for the motors
-        frontLeft0.  setDirection(DcMotor.Direction.REVERSE);
-        frontRight1. setDirection(DcMotor.Direction.FORWARD);
-        backRight2.  setDirection(DcMotor.Direction.REVERSE);
-        backLeft3.   setDirection(DcMotor.Direction.REVERSE);
+        frontLeftEH0.  setDirection(DcMotor.Direction.FORWARD);
+        frontRightCH0. setDirection(DcMotor.Direction.REVERSE);
+        backRightCH1.  setDirection(DcMotor.Direction.FORWARD);
+        backLeftEH1.   setDirection(DcMotor.Direction.FORWARD);
 
-        linearSlideMotor.    setDirection(DcMotor.Direction.REVERSE);
+        linearSlideMotor. setDirection(DcMotor.Direction.REVERSE);
+        armJointMotor.    setDirection(DcMotor.Direction.FORWARD);
 
         waitForStart();
         runtime.reset();
@@ -95,27 +94,29 @@ public class newTeleOp extends LinearOpMode {
             */
 
 
-            frontLeft0.setPower(drive_speed_multiplier*frontLeftPower);
-            frontRight1.setPower(drive_speed_multiplier*frontRightPower);
-            backRight2.setPower(drive_speed_multiplier*backRightPower);
-            backLeft3.setPower(drive_speed_multiplier*backLeftPower);
+            frontLeftEH0.setPower(drive_speed_multiplier*frontLeftPower);
+            frontRightCH0.setPower(drive_speed_multiplier*frontRightPower);
+            backRightCH1.setPower(drive_speed_multiplier*backRightPower);
+            backLeftEH1.setPower(drive_speed_multiplier*backLeftPower);
 
 
             double lift_power = gamepad2.left_bumper ? 1.0 : 0.0; // linear slide speed: if left bumper pressed, speed = 1 else speed = 0
             lift_power = gamepad2.right_bumper ? -1.0 : lift_power; // right bumper pressed, speed = -1
-            //to do: make sure that right and left bumper cant be pressed at the same time
             linearSlideMotor.setPower(lift_speed_multiplier * lift_power);
 
-            double arm_joint_position = gamepad2.dpad_up ? 0.25 : 0.0; // arm angle: if d-pad up button pressed, position = 0.25(180) else position = 0
-            arm_joint_position = gamepad2.dpad_down ? 0 : arm_joint_position; // d-pad down button pressed, position =  0 degrees
-            armJointServo.setPosition(arm_joint_position);
+            double arm_joint_power = gamepad2.dpad_up ? 1.0 : 0.0; // arm rotate speed: if up button, speed = 1 else speed = 0
+            arm_joint_power = gamepad2.dpad_down ? -1.0 : arm_joint_power; // right bumper pressed, speed = -1
+            armJointMotor.setPower(arm_joint_speed_multiplier * arm_joint_power);
 
-            double wrist_joint_position = gamepad2.a ? 0.25 : 0.0; // wrist angle: if a up button pressed, position = 0.25(180) else position = 0
-            wrist_joint_position = gamepad2.x ? 0 : wrist_joint_position; // x down button pressed, position =  0 degrees
-            armJointServo.setPosition(wrist_joint_position);
+            double claw_speed = gamepad2.a ? 1 : 0; // arm angle: if a button pressed, position = 0.25(270) else position = 0
+            claw_speed = gamepad2.b ? -1 : claw_speed; // if b button pressed, position =  0 degrees
+            clawServo.setPower(claw_speed_multiplier * claw_speed);
+
+            double wrist_joint_position = gamepad2.y ? 1.0 : 0.6; // wrist angle: if y button pressed, position = 0.25(270) else position = 0
+            wrist_joint_position = gamepad2.x ? 0.0 : wrist_joint_position; // x button pressed, position =  0 degrees
+            wristJointServo.setPosition(wrist_joint_position);
 
 
         }
-
     }
 }
