@@ -110,29 +110,39 @@ public class compTeleOp extends LinearOpMode {
             backLeftEH1.setPower(drive_speed_multiplier * backLeftPower);
 
 
-            // double lift_power = gamepad2.left_bumper ? 1.0 : 0.0; // linear slide speed: if left bumper pressed, speed = 1 else speed = 0
-            // lift_power = gamepad2.right_bumper ? -1.0 : lift_power; // right bumper pressed, speed = -1
-            // linearSlideMotor.setPower(lift_speed_multiplier * lift_power);
+            double lift_power = gamepad2.left_bumper ? 1.0 : 0.0; // linear slide speed: if left bumper pressed, speed = 1 else speed = 0
+            lift_power = gamepad2.right_bumper ? -1.0 : lift_power; // right bumper pressed, speed = -1
+            linearSlideMotor.setPower(lift_speed_multiplier * lift_power);
 
-            if(gamepad2.dpad_left){
-                linearSlideMotor.setTargetPosition(288);
-                linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                linearSlideMotor.setPower(lift_speed_multiplier);
-            }
-            if(gamepad2.dpad_right){
-                linearSlideMotor.setTargetPosition(0);
-                linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                linearSlideMotor.setPower(lift_speed_multiplier);
-            }
-
-//            double arm_joint_power = gamepad2.dpad_up ? 1.0 : 0.0; // arm rotate speed: if up button, speed = 1 else speed = 0
-//            arm_joint_power = gamepad2.dpad_down ? -1.0 : arm_joint_power; // right bumper pressed, speed = -1
-//            armJointMotor.setPower(arm_joint_speed_multiplier * arm_joint_power);
-
+            // if(gamepad2.dpad_left){
+            //     linearSlideMotor.setTargetPosition(288);
+            //     linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            //     linearSlideMotor.setPower(lift_speed_multiplier);
+            // }
+            // if(gamepad2.dpad_right){
+            //     linearSlideMotor.setTargetPosition(0);
+            //     linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            //     linearSlideMotor.setPower(lift_speed_multiplier);
+            // }
+            
             double claw_speed = gamepad2.a ? 1 : 0; // arm angle: if a button pressed, position = 0.25(270) else position = 0
             claw_speed = gamepad2.b ? -1 : claw_speed; // if b button pressed, position =  0 degrees
             clawServo.setPower(claw_speed_multiplier * claw_speed);
+            
+           // double arm_joint_power = gamepad2.dpad_up ? 1.0 : 0.0; // arm rotate speed: if up button, speed = 1 else speed = 0
+           // arm_joint_power = gamepad2.dpad_down ? -1.0 : arm_joint_power; // right bumper pressed, speed = -1
+           // armJointMotor.setPower(arm_joint_speed_multiplier * arm_joint_power);
 
+            if(gamepad2.b){
+                if(!gamepad.x){
+                    armJointMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                    armJointMotor.setPower(arm_joint_speed_multiplier);
+                }
+            } else if(gamepad2.x){
+                armJointMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                armJointMotor.setPower(-arm_joint_speed_multiplier);
+            }
+            
             if(gamepad2.dpad_up){
                 armJointMotor.setTargetPosition(72);
                 armJointMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
